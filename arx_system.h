@@ -8,13 +8,27 @@ namespace arx {
 class Component;
 class Arx;
 class System;
+
+struct ScriptObjDesc {
+	const char* name;
+	void* ptr;
+	short type;
+	short size;
 	
+	enum {
+		INTEGER,
+		FLOAT,
+		CHAR,
+		CARRAY
+	};
+};
+ 
 class SystemFactory {
 public:
 	const char* name;
 	const char* const * deps;
 	virtual System* Create( const void* blob, int size ) = 0;
-	virtual System* Destroy( System* sys ) = 0;
+	virtual int Destroy( System* sys ) = 0;
 };
 
 class System {

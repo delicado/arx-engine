@@ -369,12 +369,12 @@ public:
 
 template<typename T> class ScripterReg;
 
-template <uint32_t function_count>
+template <int ID, uint32_t function_count, int strsz = 32 >
 class ScripterData
 {
-    typedef int (ScripterData<function_count>::*_df)();
+    typedef int (ScripterData<ID, function_count, strsz>::*_df)();
 
-    static char name_[256];
+    static char name_[ strsz ];
     static _df  fptr_[function_count];
 
 protected:
@@ -383,12 +383,12 @@ public:
 
     typedef _df FType;
 
-    ScripterData<function_count>::_df get_function(uint32_t index)
+    ScripterData<ID, function_count, strsz>::_df get_function(uint32_t index)
     {
         return fptr_[index];
     }
 
-    uint32_t add_func(uint32_t id, int (ScripterData<function_count>::*func)())
+    uint32_t add_func(uint32_t id, int (ScripterData<ID, function_count, strsz>::*func)())
     {
         fptr_[id] = (_df)func;
         return id;
@@ -409,7 +409,7 @@ public:
 
     void copy_to(void* mem)
     {
-        memcpy(mem, this, sizeof(ScripterData<function_count>));
+        memcpy(mem, this, sizeof(ScripterData<ID, function_count, strsz>));
     }
 
     int test()
@@ -419,11 +419,11 @@ public:
     }
 };
 
-template <uint32_t function_count>
-char ScripterData<function_count>::name_[256];
+template < int ID, uint32_t function_count, int strsz >
+char ScripterData< ID, function_count, strsz>::name_[ strsz ];
 
-template <uint32_t function_count>
-typename ScripterData<function_count>::_df ScripterData<function_count>::fptr_[function_count];
+template < int ID, uint32_t function_count, int strsz >
+typename ScripterData<ID, function_count, strsz>::_df ScripterData<ID, function_count, strsz>::fptr_[function_count];
 
 
 template <typename T>
@@ -523,8 +523,13 @@ public:
         luaL_newmetatable(handle, ptr_->name_);
         lua_pushvalue(handle, -1);
         lua_setfield(handle, -2, "__index");
-        luaL_register(handle, NULL, array_.data());
-        luaL_register(handle, clsname_.c_str(), arrayt_.data());
+        //luaL_register(handle, NULL, array_.data());
+        //luaL_register(handle, clsname_.c_str(), arrayt_.data());
+    	luaL_setfuncs( handle, array_.data(), 0);
+    	lua_newtable( handle);
+		luaL_setfuncs( handle, arrayt_.data(), 0);
+		lua_pushvalue( handle, -1);
+		lua_setglobal( handle, clsname_.data() );
     }
 };
 
@@ -538,7 +543,7 @@ class ScripterModule
 public:
     ScripterModule() : f_error(NULL), L_(NULL)
     {
-        L_ = lua_open();
+        L_ = luaL_newstate();
     }
 
     void open_libs()

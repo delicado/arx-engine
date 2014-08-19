@@ -64,16 +64,17 @@ bool CString<CT>::operator< ( const CString& s ) const {
 	int i= 0, sz = this->Size() > s.Size() ? s.Size() : this->Size();
 	bool neq = false;
 	while( i < sz && (*this)[i] <= s[i]) {
-		if( (*this)[i] < s[i] ) neq = 1;
+		if( (*this)[i] < s[i]){
+			neq = 1;
+			break;
+		}
 		i++;
 	}
-	if( i == sz ){
-		if( !neq ){
-			if( this->Size() < s.Size())
-				neq= 1;
-		}else neq= 1;
-	} else neq= 0;
-	return neq;
+	if( !neq && i == sz ){
+		if( this->Size() < s.Size() )
+			neq = 1;
+	} 
+	return neq; 
 } 
 
 template <typename CT> 
@@ -81,15 +82,16 @@ bool CString<CT>::operator> ( const CString& s ) const {
 	int i= 0, sz = this->Size() > s.Size() ? s.Size() : this->Size();
 	bool neq = false;
 	while( i < sz && (*this)[i] >= s[i]) {
-		if( (*this)[i] > s[i] ) neq = 1;
+		if( (*this)[i] > s[i]){
+			neq = 1;
+			break;
+		}
 		i++;
 	}
-	if( i == sz ){
-		if( !neq ){
-			if( this->Size() > s.Size())
-				neq= 1;
-		}else neq= 1;
-	} else neq= 0;
+	if( !neq && i == sz ){
+		if( this->Size() > s.Size() )
+			neq = 1;
+	}
 	return neq;
 }
  
@@ -98,16 +100,15 @@ bool CString<CT>::operator>= ( const CString& s ) const {
 	int i= 0, sz = this->Size() > s.Size() ? s.Size() : this->Size();
 	bool neq = false;
 	while( i < sz && (*this)[i] >= s[i]) {
-		if( (*this)[i] > s[i] ) neq = 1;
+		if( (*this)[i] > s[i]){
+			neq = 1;
+			break;
+		}
 		i++;
 	}
-	if( i == sz ){
-		if( !neq ){
-			if( this->Size() >= s.Size())
-				neq= 1;
-		}else neq= 1;
-	} else neq= 0;
-	return neq;
+	if( !neq && this->Size() == s.Size() && i == sz )
+		neq = 1;
+	return neq; 
 } 
 
  template <typename CT> 
@@ -115,16 +116,15 @@ bool CString<CT>::operator<= ( const CString& s ) const {
 	int i= 0, sz = this->Size() > s.Size() ? s.Size() : this->Size();
 	bool neq = false;
 	while( i < sz && (*this)[i] <= s[i]) {
-		if( (*this)[i] < s[i] ) neq = 1;
+		if( (*this)[i] < s[i]){
+			neq = 1;
+			break;
+		}
 		i++;
 	}
-	if( i == sz ){
-		if( !neq ){
-			if( this->Size() <= s.Size())
-				neq= 1;
-		}else neq= 1;
-	} else neq= 0;
-	return neq;
+	if( !neq && this->Size() == s.Size() && i == sz )
+		neq = 1;
+	return neq; 
 } 
 
 }

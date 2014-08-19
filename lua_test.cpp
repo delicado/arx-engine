@@ -13,7 +13,7 @@ void report_error(const char* t)
 // para ma-expose ang class, dapat maging base class nya muna ang ScripterData class
 // yung parameter ng ScripterData, ang maximum na function na i-expose sa Lua interpreter
 
-struct TT : public ScripterData<15>
+struct TT : public ScripterData<0, 5, 32>
 {
     std::string str;
 
@@ -38,12 +38,16 @@ struct TT : public ScripterData<15>
         std::cout << "function4 called" << std::endl;
         str = t;
     }
+    
+    void function5(){
+    	std::cout << str << std::endl;
+    }
 };
 
 int main(int argc, char** argv)
 {
     TT  temp;
-    if(argc > 1)
+    if(1)
     {
         // i suggest you learn Lua. at http://www.lua.org
         ScripterModule lua;
@@ -58,12 +62,12 @@ int main(int argc, char** argv)
         reg.add_func<1> (&TT::function2, "get_data");
         reg.add_func<2> (&TT::function3, "set_data");
         reg.add_func<3> (&TT::function4, "set_text");
-
+		reg.add_func<4> (&TT::function5, "display");
         // then register.
         reg.register_type(lua.get_handle());
-
+		std::cout << "here" << std::endl;
         // loads a lua file. then runs it.
-        lua.run_file(argv[1]);
+        lua.run_file( "lua_test.lua");
     }
 
     return 0;
